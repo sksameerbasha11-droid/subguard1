@@ -18,6 +18,27 @@ import { connectWallet, getConnectedAddress } from "@/lib/wallet/bridgekey";
 import { createSubscription } from "@/lib/blockchain/client";
 import { shortenTxHash } from "@/lib/format";
 
+/**
+ * Maps ethers / EIP-1193 errors to a message a user can act on.
+ */
+const describeTransactionError = (err: any): string => {
+  if (err?.code === 4001 || err?.code === "ACTION_REJECTED") {
+    return "You rejected the signature request in your wallet. No subscription was created.";
+  }
+  if (err?.code === "INSUFFICIENT_FUNDS") {
+    return "Your wallet does not have enough MSTC to pay for gas on this transaction.";
+  }
+  if (err?.code === "NETWORK_ERROR" || err?.code === "SERVER_ERROR" || err?.code === "TIMEOUT") {
+    return "Could not reach the MST Testnet RPC. Check your connection and the configured RPC URL, then try again.";
+  }
+  if (err?.code === "CALL_EXCEPTION") {
+    return "The smart contract rejected this transaction. Check the network and contract address, then try again.";
+  }
+
+  const reason = err?.reason || err?.shortMessage || err?.message;
+  return reason ? `Transaction failed: ${reason}` : "Transaction failed for an unknown reason. No subscription was created.";
+};
+
 export default function AddSubscriptionPage() {
   const router = useRouter();
 
@@ -92,6 +113,15 @@ export default function AddSubscriptionPage() {
       setErrorMsg("Maximum allowed amount must be greater than or equal to subscription amount.");
       return;
     }
+    // The contract stores amounts as uint256, so decimals can never be encoded.
+    if (!Number.isInteger(numAmount) || !Number.isInteger(numMax)) {
+      setErrorMsg("Amounts must be whole numbers — the smart contract stores values as integers.");
+      return;
+    }
+    if (!Number.isInteger(parseInt(billingCycle)) || parseInt(billingCycle) <= 0) {
+      setErrorMsg("Billing cycle must be a valid number of seconds.");
+      return;
+    }
 
     const nextPaymentTimestamp = Math.floor(new Date(nextPaymentDate).getTime() / 1000);
     if (isNaN(nextPaymentTimestamp) || nextPaymentTimestamp < Math.floor(Date.now() / 1000)) {
@@ -121,12 +151,10 @@ export default function AddSubscriptionPage() {
       setSuccessTxHash(hash);
       setStatusState("success");
     } catch (err: any) {
-      console.warn("Falling back to simulated transaction receipt for testnet demo:", err);
-      // Simulate real confirmation if local wallet RPC is pending
-      setTimeout(() => {
-        setSuccessTxHash("0x7a83b24f10de29c49182390f738a1bbcc2839210");
-        setStatusState("success");
-      }, 1500);
+      // Never fabricate a transaction: surface the real failure to the user.
+      console.error("Subscription creation failed:", err);
+      setStatusState("error");
+      setErrorMsg(describeTransactionError(err));
     }
   };
 
@@ -278,7 +306,8 @@ export default function AddSubscriptionPage() {
                   <input
                     type="number"
                     required
-                    step="any"
+                    min={1}
+                    step={1}
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     className="w-full mt-1 bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-mono text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
@@ -292,7 +321,8 @@ export default function AddSubscriptionPage() {
                   <input
                     type="number"
                     required
-                    step="any"
+                    min={1}
+                    step={1}
                     value={maxAmount}
                     onChange={(e) => setMaxAmount(e.target.value)}
                     className="w-full mt-1 bg-white border border-indigo-300 rounded-xl px-4 py-2.5 text-xs font-mono font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"

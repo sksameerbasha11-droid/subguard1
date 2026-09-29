@@ -36,7 +36,7 @@ export default function OnboardingPage() {
         <div className="text-center space-y-1">
           <h1 className="text-2xl font-extrabold text-slate-900">Welcome to SubGuard</h1>
           <p className="text-xs text-slate-500">
-            Let's get your payment firewall initialized in three simple steps.
+            Let&apos;s get your payment firewall initialized in three simple steps.
           </p>
         </div>
 

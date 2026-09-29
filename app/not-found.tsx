@@ -6,7 +6,7 @@ export default function NotFound() {
     <div className="min-h-screen bg-[#F7F9FC] flex flex-col items-center justify-center p-6 selection:bg-indigo-500 selection:text-white">
       <GlassCard className="p-10 sm:p-14 text-center max-w-md w-full space-y-4 shadow-xl">
         <h1 className="text-6xl font-black text-indigo-600">404</h1>
-        <h2 className="text-xl font-bold text-slate-900">This page doesn't exist.</h2>
+        <h2 className="text-xl font-bold text-slate-900">This page doesn&apos;t exist.</h2>
         <p className="text-xs text-slate-500 leading-relaxed">
           The route you are looking for was not found or has been moved.
         </p>

@@ -52,7 +52,7 @@ export default function LogoutPage() {
             Session Terminated
           </span>
           <h2 className="text-2xl font-black text-slate-900 tracking-tight mt-2.5">
-            You've been signed out
+            You&apos;ve been signed out
           </h2>
           <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">
             Your wallet session and SubGuard mandate credentials have been safely cleared from this browser.

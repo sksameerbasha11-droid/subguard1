@@ -70,7 +70,7 @@ export default function NotificationsPage() {
 
         {notifications.length === 0 ? (
           <GlassCard className="p-12 text-center space-y-3">
-            <p className="text-base font-bold text-slate-800">You're all caught up.</p>
+            <p className="text-base font-bold text-slate-800">You&apos;re all caught up.</p>
             <p className="text-xs text-slate-500">No new notifications at this time.</p>
           </GlassCard>
         ) : (

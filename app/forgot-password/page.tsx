@@ -46,7 +46,7 @@ export default function ForgotPasswordPage() {
             </div>
             <h2 className="text-base font-bold text-slate-900">Reset link dispatched</h2>
             <p className="text-xs text-slate-600">
-              We've sent a password reset link to <strong>{email}</strong> if an account exists.
+              We&apos;ve sent a password reset link to <strong>{email}</strong> if an account exists.
             </p>
             <Link
               href="/reset-password"
