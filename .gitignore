@@ -1,0 +1,22 @@
+node_modules
+.next
+out
+build
+dist
+
+# Hardhat
+artifacts
+cache
+typechain
+typechain-types
+
+# Environment & Secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS
+.DS_Store
+Thumbs.db
